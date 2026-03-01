@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>블루스카이 재게시id 추출 및 뽑기 프로그램</title>
+
+  <style>
+    body {
+      margin: 0;
+      background-color: aliceblue;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    main {
+      max-width: 740px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      gap: 1rem;
+    }
+
+    strong {
+      color: brown;
+    }
+
+    .section1 {
+      max-width: 320px;
+      width: 100%;
+    }
+
+    .guide {
+      margin: 0.5rem 0;
+      border: 1px solid blue;
+      padding: 0.5rem;
+      width: 300px;
+    }
+
+    .id-textarea {
+      width: 300px;
+      height: 600px;
+      resize: none;
+      padding: 0.5rem;
+    }
+
+    .result-textarea {
+      width: 300px;
+      height: 300px;
+      resize: none;
+      padding: 0.5rem;
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <section class="section1">
+      <h2>id 추출</h2>
+
+      <form>
+        <div>
+          <button id="button1">id를 배열로 가져오기 (예: [@1, @2])</button>
+          <br />
+          <button id="button2">id를 그냥 가져오기 (예: @1 @2 @3])</button>
+        </div>
+
+        <div class="guide">
+          - 준비물: 마우스가 딸린 컴퓨터<br />
+          - 사용설명서:<br />
+          <ol>
+            <li>이벤트 스윗(글) 하단에 있는 <strong>재게시 글자를 클릭</strong>합니다.</li>
+            <li><strong>재게시한 사용자 목록</strong>이 나올 것입니다. 그 목록을 맨 위부터 아래까지 전부 <strong>복사(ctrl+c)</strong>합니다.</li>
+            <li>복사한 내용을 아래의 입력창에 붙여넣고 위의 버튼 중 하나를 누릅니다.</li>
+            <li>경고창의 추출된 id 목록을 복사해서 쓰시면 됩니다.</li>
+          </ol>
+        </div>
+
+        <textarea class="id-textarea" id="idTextarea" placeholder="여기에 복사한 내용을 붙여넣으세요."></textarea>
+      </form>
+    </section>
+
+
+    <section>
+      <h2>결과창</h2>
+      <div>
+        <button id="copyButton">결과 복사하기</button>
+      </div>
+      <br>
+      <textarea class="result-textarea" id="resultTextarea" readonly placeholder="결과 표시창"></textarea>
+    </section>
+  </main>
+
+
+  <script>
+    const $전체입력창 = document.querySelector('#idTextarea');
+    const $배열뿜는버튼 = document.querySelector('#button1');
+    const $id그냥id내놓는버튼 = document.querySelector('#button2');
+    const $결과창 = document.querySelector('#resultTextarea');
+    const $복사버튼 = document.querySelector('#copyButton');
+
+    const idRegex = /@[a-zA-Z0-9_.-]+/g
+
+    function 계정추출함수(type, event) {
+      if (event) event.preventDefault();
+
+      const 내용물 = $전체입력창.value;
+      const 계정만추출 = 내용물.match(idRegex);
+
+      if (계정만추출) {
+        const 중복없는id목록 = [...new Set(계정만추출)];
+
+        let 추출결과 = '';
+        if (type === 'array') {
+          추출결과 = `[${중복없는id목록.join(', ')}]`
+        } else if (type === 'normal') {
+          추출결과 = 중복없는id목록.join(' ');
+        }
+
+        $결과창.value = 추출결과;
+      } else {
+        alert('제대로 된 내용을 넣은 뒤 버튼을 클릭하세요.')
+      }
+    };
+
+    $배열뿜는버튼.addEventListener('click', (event) => 계정추출함수('array', event));
+    $id그냥id내놓는버튼.addEventListener('click', (event) => 계정추출함수('normal', event));
+
+    $복사버튼.addEventListener('click', (event) => {
+      event.preventDefault();
+      $결과창.select();
+      document.execCommand('copy');
+      alert('결과를 클립보드에 복사했습니다.');
+    })
+  </script>
+</body>
+
+</html>
